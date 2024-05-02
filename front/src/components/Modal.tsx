@@ -4,6 +4,9 @@ import { useTodo } from "@/context/todoContext";
 import { Tag } from "@/types/types";
 import axios from "axios";
 import { FormEvent, useEffect, useState } from "react";
+import Image from "next/image";
+import delIcon from "../../public/delete.png"
+import delIconWhite from "../../public/deleteWhite.png"
 
 export default function Modal() {
     const { index, setShowModal } = useModal();
@@ -20,6 +23,7 @@ export default function Modal() {
         try{
             const res = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/tag", data)
             const r = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/tag/" + res.data.id + "/add-todo/" + todos[index].id) 
+            console.log(res.data)
             addTag(index, res.data);
             setShowModal(false);
         }catch(e){
@@ -39,6 +43,20 @@ export default function Modal() {
         }catch(e){
             console.error(e);
         }
+    }
+
+    const handleDelete = async (t: Tag, index: number) => {
+        try{
+            const res =  await axios.delete(process.env.NEXT_PUBLIC_API_URL + "/tag/" + t.id);
+            const newTags = tags.filter((a: Tag) => a.id !== t.id);
+            setTags(newTags);
+            if(todos[index]?.tags?.map((d) => d?.id).includes(t?.id)){
+                removeTag(index, t)
+            }
+        }catch(e){
+            console.error(e);
+        }
+        
     }
 
     useEffect(() => {
@@ -62,9 +80,9 @@ export default function Modal() {
                  right-2 top-2" onClick={() => setShowModal(false)}>✕</button>
 
                 <div className="flex flex-col w-full h-full lg:flex-row">
-                    <div className="w-1/2 h-full card bg-base-300 rounded-box place-items-center"> 
+                    <div className={`w-1/2 h-full card ${isDarkMode ?  'bg-base-300' : "bg-primary text-black" } rounded-box place-items-center`}> 
                         <form className="flex flex-col items-center justify-evenly w-2/3 h-full" onSubmit={(e) => handleSubmit(e)}>
-                            <h1>Crie uma nova Tag</h1>
+                            <h1 className="text-lg">Crie uma nova Tag</h1>
                             <div className={`w-full font-semibold ${isDarkMode ? 'text-white' : 'text-black'}`}>
                                 <h3 className="p-1">Tag: </h3>
                                 <input className={`w-full bg-inherit py-3 rounded-md px-4 border-2 ${isDarkMode ? 'border-darkSecundary' :
@@ -78,15 +96,20 @@ export default function Modal() {
                     </div>
                     <div className="divider lg:divider-horizontal">Ou</div>
 
-                    <div className="w-1/2 h-full card bg-base-300 rounded-box flex items-center justify-center">
-                        <div className="w-full h-[70%] overflow-y-auto flex flex-col items-center ">
-                            {tags && tags.map((t: Tag) => {
+                    <div className={`w-1/2 h-full card bg-base-300  ${isDarkMode ? 'bg-base-300' : "bg-primary text-black"} rounded-box flex  items-center justify-center`}>
+                        <div className="w-full h-[70%] overflow-y-auto flex flex-col items-center">
+                            {tags && tags?.map((t: Tag, i) => {
                                 return (
                                     <div className={`flex w-2/3 flex-row
                                     mt-2 kbd h-[15%] items-center py-2 border-${isDarkMode ? 'darkSecundary' : 'secundary'}
-                                    bg-${isDarkMode ? 'darkPrimary' : 'primary'} justify-start`}>
-                                        <input onClick={() => handleAddTag(t, !todos[index].tags.map((d) => d.id).includes(t.id))} type="checkbox" checked={todos[index].tags.map((d) => d.id).includes(t.id)} className={`checkbox border-${isDarkMode ? 'darkSecundary' : 'secundary'}`} />
-                                        <h1 className="text-lg px-2">{t.title}</h1>
+                                    bg-${isDarkMode ? 'darkPrimary' : 'primary'} justify-between`} key={i}>
+                                        <div className="flex flex-row">
+                                            <input onClick={() => handleAddTag(t, !todos[index]?.tags?.map((d) => d?.id).includes(t?.id))} type="checkbox" checked={todos[index]?.tags?.map((d) => d?.id)?.includes(t?.id)} className={`checkbox border-${isDarkMode ? 'darkSecundary' : 'secundary'}`} />
+                                            <h1 className="text-lg px-2">{t.title}</h1>
+                                        </div>
+
+                                        <Image onClick={() => handleDelete(t, index)} src={isDarkMode ? delIconWhite : delIcon}
+                                            alt="delete icon" width={19} height={19} className="cursor-pointer" />
                                     </div>
                                 )
                             })}

@@ -11,6 +11,9 @@ export class TodoRepository {
                 data: {
                     title: todoTitle,
                     completed: false,
+                },
+                include: {
+                    tags: true
                 }
             })
             return todo;
@@ -60,6 +63,9 @@ export class TodoRepository {
                 },
                 data: {
                     completed: !todo.completed
+                },
+                include: {
+                    tags: true
                 }
             })
             return res

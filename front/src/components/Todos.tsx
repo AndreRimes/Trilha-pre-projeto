@@ -16,7 +16,7 @@ export default function Todos() {
                 ],
             })
         );
-    }, []);
+    }, [setTodos]);
 
     return (
         <div className="relative z-1 w-full max-h-[70%] h-[70%] overflow-auto">

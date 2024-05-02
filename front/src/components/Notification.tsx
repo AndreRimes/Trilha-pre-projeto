@@ -22,7 +22,7 @@ const Notification: React.FC<Props> = ({ setNotf }) => {
         return () => {
             if (timerId) clearTimeout(timerId);
         };
-    }, []);
+    }, [setTimerId, setNotf, timerId]);
 
     const handleClose = () => {
         if (timerId) clearTimeout(timerId);

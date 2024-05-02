@@ -112,7 +112,7 @@ export default function TodoComponent({ todo, index, moveTodo }: props) {
                 <p className="font-bold px-2">tags: </p>
                     {todo.tags && todo.tags.map((tag: Tag, index: number) => {
                         return (
-                            <TagComponent tag={tag} index={index} />
+                            <TagComponent key={index} tag={tag} index={index} />
                         )
                     })}
                 <Image onClick={() => handleClick()} className="p-1 cursor-pointer" src={isDarkMode ? addIconWhite : addIcon} alt="add Icon" width={24} height={24} />

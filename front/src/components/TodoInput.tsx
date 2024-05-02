@@ -15,7 +15,8 @@ export default function TodoInput({ setNotf }: { setNotf: React.Dispatch<React.S
             title : todoText,
         }
         try{
-            const res =await axios.post(process.env.NEXT_PUBLIC_API_URL + "/todo", data)
+            const res = await axios.post(process.env.NEXT_PUBLIC_API_URL + "/todo", data)
+            console.log(res.data);
             addTodo(res.data)
             setNotf(true);
             setTodoText('')
